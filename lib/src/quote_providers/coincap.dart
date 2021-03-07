@@ -46,7 +46,7 @@ class Coincap {
       String symbol, http.Client client) async {
     final String quoteUrl = 'https://api.coincap.io/v2/assets/' + symbol;
     try {
-      final http.Response quoteRes = await client.get(quoteUrl);
+      final http.Response quoteRes = await client.get(Uri.parse(quoteUrl));
       if (quoteRes != null &&
           quoteRes.statusCode == 200 &&
           quoteRes.body != null) {

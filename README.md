@@ -16,7 +16,7 @@ The easiest way to use this library is via the top-level functions. They allow y
   print('Number of attributes retrieved for KO: ${quotePrice['KO'].keys.length}.');
   print('Current market price for KO: ${quotePrice['KO']['price']}.');
 ```
-If you're making multiple quote requests to the same server, you can request all of them in a single function call:
+If you're making multiple quote requests to the same server, you can request all of them in a single function call:pub
 ```dart
   final Map<String, Map<String, String>> quotePrice =
       await FinanceQuote.getPrice(

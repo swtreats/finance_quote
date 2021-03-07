@@ -63,7 +63,7 @@ class Coinmarketcap {
     final String quoteUrl =
         'https://api.coinmarketcap.com/v2/ticker/?start=$_start&limit=${_start + _searchStep}';
     try {
-      final http.Response quoteRes = await client.get(quoteUrl);
+      final http.Response quoteRes = await client.get(Uri.parse(quoteUrl));
       if (quoteRes != null &&
           quoteRes.statusCode == 200 &&
           quoteRes.body != null) {

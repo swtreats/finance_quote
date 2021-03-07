@@ -2,6 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+
 import 'package:logger/logger.dart';
 
 class AppLogger extends LogPrinter {
@@ -10,13 +11,15 @@ class AppLogger extends LogPrinter {
   AppLogger(this.className);
 
   @override
-  void log(LogEvent event) {
+  List<String> log(LogEvent event) {
+    final List<String> output = <String>[];
     final String emoji = PrettyPrinter.levelEmojis[event.level];
     if (event.error != null) {
-      println(
+      output.add(
           '$emoji${event.level} - [$className] ${event.message} ${event.error} ${event.stackTrace}');
     } else {
-      println('$emoji${event.level} - [$className] ${event.message}');
+      output.add('$emoji${event.level} - [$className] ${event.message}');
     }
+    return output;
   }
 }

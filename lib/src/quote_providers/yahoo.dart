@@ -55,7 +55,7 @@ class Yahoo {
         'https://query1.finance.yahoo.com/v7/finance/quote?symbols=' +
             symbolList;
     try {
-      final http.Response quoteRes = await client.get(quoteUrl);
+      final http.Response quoteRes = await client.get(Uri.parse(quoteUrl));
       if (quoteRes != null &&
           quoteRes.statusCode == 200 &&
           quoteRes.body != null) {

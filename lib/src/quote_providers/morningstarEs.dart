@@ -48,7 +48,7 @@ class MorningstarEs {
     final String quoteUrl =
         'http://tools.morningstar.es/es/stockreport/default.aspx?id=' + symbol;
     try {
-      final http.Response quoteRes = await client.get(quoteUrl);
+      final http.Response quoteRes = await client.get(Uri.parse(quoteUrl));
       if (quoteRes != null &&
           quoteRes.statusCode == 200 &&
           quoteRes.body != null) {
