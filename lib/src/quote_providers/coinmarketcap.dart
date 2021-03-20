@@ -8,10 +8,11 @@ import 'package:http/http.dart' as http;
 import 'package:logger/logger.dart';
 
 class CoinmarketcapApiException implements Exception {
-  final int statusCode;
+  final int? statusCode;
   final String message;
 
-  const CoinmarketcapApiException({this.statusCode, this.message});
+  const CoinmarketcapApiException({this.statusCode,
+    required this.message});
 }
 
 class Coinmarketcap {
@@ -20,7 +21,7 @@ class Coinmarketcap {
     int _start = 1;
     const int _searchStep = 49;
     const int _numberOfCoins = 100;
-    List<String> _symbolsRetrieved;
+    late List<String> _symbolsRetrieved;
     final Map<String, Map<String, dynamic>> results =
         <String, Map<String, dynamic>>{};
 
@@ -28,13 +29,13 @@ class Coinmarketcap {
       try {
         _symbolsRetrieved = <String>[];
 
-        final Map<String, dynamic> quoteRaw =
+        final Map<String, dynamic>? quoteRaw =
             await _getRawQuote(_start, _searchStep, client);
 
         // Search in the answer obtained the data corresponding to the symbols.
         // If requested symbol data is found add it to [portfolioQuotePrices].
         for (String symbol in symbols) {
-          for (dynamic marketData in quoteRaw.values) {
+          for (dynamic marketData in quoteRaw!.values) {
             if (marketData['symbol'] == symbol) {
               // ignore: avoid_as
               results[symbol] = marketData as Map<String, dynamic>;
@@ -58,29 +59,27 @@ class Coinmarketcap {
     return results;
   }
 
-  static Future<Map<String, dynamic>> _getRawQuote(
+  static Future<Map<String, dynamic>?> _getRawQuote(
       int _start, int _searchStep, http.Client client) async {
     final String quoteUrl =
         'https://api.coinmarketcap.com/v2/ticker/?start=$_start&limit=${_start + _searchStep}';
     try {
       final http.Response quoteRes = await client.get(Uri.parse(quoteUrl));
-      if (quoteRes != null &&
-          quoteRes.statusCode == 200 &&
-          quoteRes.body != null) {
+      if (quoteRes.statusCode == 200) {
         return parseRawQuote(quoteRes.body);
       } else {
         throw CoinmarketcapApiException(
-            statusCode: quoteRes?.statusCode, message: 'Invalid response.');
+            statusCode: quoteRes.statusCode, message: 'Invalid response.');
       }
     } on http.ClientException {
       throw const CoinmarketcapApiException(message: 'Connection failed.');
     }
   }
 
-  static Map<String, dynamic> parseRawQuote(String quoteResBody) {
+  static Map<String, dynamic>? parseRawQuote(String quoteResBody) {
     try {
       return const JsonDecoder().convert(quoteResBody)['data']
-          as Map<String, dynamic>;
+          as Map<String, dynamic>?;
     } catch (e) {
       throw const CoinmarketcapApiException(
           statusCode: 200, message: 'Quote was not parseable.');

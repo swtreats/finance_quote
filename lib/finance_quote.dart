@@ -5,7 +5,6 @@
 library finance_quote;
 
 import 'package:finance_quote/src/quote_providers/binance.dart';
-import 'package:meta/meta.dart';
 import 'package:finance_quote/src/utils/app_logger.dart';
 import 'package:finance_quote/src/quote_providers/coincap.dart';
 import 'package:finance_quote/src/quote_providers/coinmarketcap.dart';
@@ -40,11 +39,11 @@ class FinanceQuote {
   /// This is used for testing purposes.
   ///
   /// If specified, the `logger` provided will be used, otherwise default Logger will be used.
-  static Future<Map<String, Map<String, dynamic>>> getRawData(
-      {@required QuoteProvider quoteProvider,
-      @required List<String> symbols,
-      http.Client client,
-      Logger logger}) async {
+  static Future<Map<String, Map<String, dynamic>?>> getRawData(
+      {required QuoteProvider quoteProvider,
+      required List<String> symbols,
+      http.Client? client,
+      Logger? logger}) async {
     // If client is not provided, use http IO client
     client ??= http.Client();
 
@@ -52,7 +51,7 @@ class FinanceQuote {
     logger ??= Logger(printer: AppLogger('FinanceQuote'));
 
     // Retrieved market data.
-    Map<String, Map<String, dynamic>> retrievedQuoteData =
+    Map<String, Map<String, dynamic>?> retrievedQuoteData =
         <String, Map<String, dynamic>>{};
 
     if (symbols.isEmpty) {
@@ -119,10 +118,10 @@ class FinanceQuote {
   ///
   /// If specified, the `logger` provided will be used, otherwise default Logger will be used.
   static Future<Map<String, Map<String, String>>> getPrice(
-      {@required QuoteProvider quoteProvider,
-      @required List<String> symbols,
-      http.Client client,
-      Logger logger}) async {
+      {required QuoteProvider quoteProvider,
+      required List<String> symbols,
+      http.Client? client,
+      Logger? logger}) async {
     final Map<String, Map<String, String>> quotePrice =
         <String, Map<String, String>>{};
 
@@ -130,47 +129,47 @@ class FinanceQuote {
       return quotePrice;
     }
 
-    final Map<String, Map<String, dynamic>> rawQuotes = await getRawData(
+    final Map<String, Map<String, dynamic>?> rawQuotes = await getRawData(
         quoteProvider: quoteProvider,
         symbols: symbols,
         client: client,
         logger: logger);
 
-    rawQuotes.forEach((String symbol, Map<String, dynamic> rawQuote) {
+    rawQuotes.forEach((String symbol, Map<String, dynamic>? rawQuote) {
       switch (quoteProvider) {
         case QuoteProvider.yahoo:
           {
-            quotePrice[symbol] = Yahoo.parsePrice(rawQuote);
+            quotePrice[symbol] = Yahoo.parsePrice(rawQuote!);
           }
           break;
         case QuoteProvider.morningstarDe:
           {
-            quotePrice[symbol] = MorningstarDe.parsePrice(rawQuote);
+            quotePrice[symbol] = MorningstarDe.parsePrice(rawQuote!);
           }
           break;
         case QuoteProvider.morningstarEs:
           {
-            quotePrice[symbol] = MorningstarEs.parsePrice(rawQuote);
+            quotePrice[symbol] = MorningstarEs.parsePrice(rawQuote!);
           }
           break;
         case QuoteProvider.coinmarketcap:
           {
-            quotePrice[symbol] = Coinmarketcap.parsePrice(rawQuote);
+            quotePrice[symbol] = Coinmarketcap.parsePrice(rawQuote!);
           }
           break;
         case QuoteProvider.coincap:
           {
-            quotePrice[symbol] = Coincap.parsePrice(rawQuote);
+            quotePrice[symbol] = Coincap.parsePrice(rawQuote!);
           }
           break;
         case QuoteProvider.binance:
           {
-            quotePrice[symbol] = Binance.parsePrice(rawQuote);
+            quotePrice[symbol] = Binance.parsePrice(rawQuote!);
           }
           break;
         default:
           {
-            logger.e('Unknown Quote Source');
+            logger!.e('Unknown Quote Source');
           }
           break;
       }

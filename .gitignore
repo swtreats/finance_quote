@@ -29,6 +29,7 @@
 .pub/
 build/
 pubspec.lock
+*.mocks.dart
 
 # Android related
 **/android/**/gradle-wrapper.jar

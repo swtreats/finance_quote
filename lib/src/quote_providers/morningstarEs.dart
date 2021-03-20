@@ -9,10 +9,11 @@ import 'package:html/parser.dart' show parse;
 import 'package:html/dom.dart';
 
 class MorningstarEsApiException implements Exception {
-  final int statusCode;
+  final int? statusCode;
   final String message;
 
-  const MorningstarEsApiException({this.statusCode, this.message});
+  const MorningstarEsApiException({this.statusCode,
+    required this.message});
 }
 
 class MorningstarEs {
@@ -29,7 +30,7 @@ class MorningstarEs {
       try {
         final Map<String, dynamic> quoteRaw =
             await _getRawQuote(symbol, client);
-        if (quoteRaw != null && quoteRaw.isNotEmpty) {
+        if (quoteRaw.isNotEmpty) {
           results[symbol] = quoteRaw;
         }
       } on MorningstarEsApiException catch (e) {
@@ -49,13 +50,11 @@ class MorningstarEs {
         'http://tools.morningstar.es/es/stockreport/default.aspx?id=' + symbol;
     try {
       final http.Response quoteRes = await client.get(Uri.parse(quoteUrl));
-      if (quoteRes != null &&
-          quoteRes.statusCode == 200 &&
-          quoteRes.body != null) {
+      if (quoteRes.statusCode == 200) {
         return parseRawQuote(quoteRes.body);
       } else {
         throw MorningstarEsApiException(
-            statusCode: quoteRes?.statusCode, message: 'Invalid response.');
+            statusCode: quoteRes.statusCode, message: 'Invalid response.');
       }
     } on http.ClientException {
       throw const MorningstarEsApiException(message: 'Connection failed.');
@@ -69,11 +68,11 @@ class MorningstarEs {
       final Document document = parse(quoteResBody);
 
       final double price = f
-          .parse((document.querySelector('.price').nodes[0] as Text).data)
+          .parse((document.querySelector('.price')!.nodes[0] as Text).data)
           .toDouble();
 
       final String currency =
-          (document.querySelector('.priceInformation').nodes[4] as Text)
+          (document.querySelector('.priceInformation')!.nodes[4] as Text)
               .data
               .split(' | ')[1]
               .split('\n')[0]
